@@ -7,11 +7,11 @@
 ```bash
 git switch main
 git pull --ff-only
-git switch -c feat/session-list
+git switch -c feat/scheduler-diagnostics
 # 完成对应任务并验证
 git add <相关文件>
-git commit -m "feat: 展示当前租户会话列表"
-git push -u origin feat/session-list
+git commit -m "feat: 增加调度诊断字段"
+git push -u origin feat/scheduler-diagnostics
 ```
 
 分支可使用 `feat/`、`fix/`、`docs/`、`test/` 前缀。PR 关联 Issue，说明交付行为、验收结果和 AI 辅助范围；保持一次 PR 聚焦一个可评审任务。
