@@ -17,15 +17,6 @@ flowchart LR
 
 [最终 Checklist 与 Top 12](docs/FINAL_RELEASE_CHECKLIST.md) · [三分钟答辩与源码](docs/INTERVIEW_DEFENSE.md) · [验收状态](docs/STATUS.md) · [证据与源码索引](docs/evidence/validation-index.json) · [上游贡献](docs/UPSTREAM_PRS.md)
 
-| P2 GPU 与 Token 成本速览 | 已验证结果 | 证据范围 |
-| --- | --- | --- |
-| 跨 Suspend 的会话身份 | `X-Dynamo-Session-ID` 跨 Actor epoch 保持稳定，inference lease 旋转 | 原生身份契约；跨 Suspend 的物理 GPU 命中率为 `not_collected_cross_suspend_resume_gpu` |
-| vLLM Prefix Cache 与重算 | 三次热请求各命中 **240/256＝93.75%**，合计避免 **720 Re-prefill Token**；驱逐后三次各重算 256 token | 独立单 Worker、真实 GPU、官方 KVIndexer 对账 |
-| CUDA KV 驻留与重建 | **30/30** 组；KV 驻留 **576～2,304 MiB**，全部重算 **0.179～0.746 s**；计入重建后，64 会话耗时 **−22.5%**，反转位于 **48～64** 两个实测点之间 | RTX 4070 Laptop、OPT-125M、3 GiB allocator 预算 |
-| ThunderAgent `acting` 配额 | **708 → 0 → 708**；挂起释放 708 个逻辑 Token 配额 | 原生 CPU Mocker 的 Program 准入预算 |
-
-[P2 原始证据](docs/GPU_VALIDATION.md) · [带采集状态的公开指标汇总](docs/evidence/release-metrics.json)
-
 **跨生命周期 CPU 联合验证：**真实 gVisor MEMORY＋双官方 Dynamo Mocker 完成 **54/54 Trial**，验证跨 Epoch 的 Session 保持、Lease 轮换、旧凭证 401 和 **257 → 0 → 257** 逻辑预算。恢复后保留缓存时模拟命中 **240/256 Token**，确认驱逐后命中 **0/256**；亲和 Off／Hard 两组结果一致。[完整报告与原始回执](docs/LIFECYCLE_KV_VALIDATION.md) · [Actions 42991535195](https://github.com/lilong555/agentcloud/actions/runs/42991535195)
 
 ## 确定性状态与真实恢复
@@ -79,27 +70,6 @@ Inference Lease、Model Attempt ID、Actor UID／epoch、工具安全点与 dura
 
 生产生命周期默认每个 Workspace 保留最近 **K=2 个已验证 COMMITTED 恢复点**，保护当前 manifest 和未决操作；旧 Tag 与过期孤儿通过持久删除意图、身份围栏及有界退避回收。公开轨迹回放中，四策略各 33 个 Workspace 最终均保留 66 个恢复点，累计回收 98 个旧 Tag，删除待办为零。[实机 GC 对账](docs/evidence/public-traces/runs/42858419910/snapshot-gc-reconciliation.json)记录累计创建量、保留量及删除墓碑；历史实验保持其原始保留策略。
 
-## 真实 GPU：收益反转与官方 KV 事件
-
-**真实 CUDA 压力曲线：**RTX 4070 Laptop 8 GiB、OPT-125M、3 GiB allocator 预算，完成 **30/30 组测量**。16／24／32／48／64 个闲置会话下，释放 KV 并计入全部重建后的总耗时变化为 **+44.5%／+58.1%／+70.6%／+26.5%／−22.5%**。高压力下释放 KV 扩大推理 batch，覆盖重建成本；反转位于当前 **48～64 会话**两个离散测点之间。
-
-![真实 CUDA 压力与重建成本](docs/evidence/gpu/cuda-kv-pressure-curve.svg)
-
-**真实 vLLM 官方事件链路：**`vLLM → ZMQ → relay → KVIndexer → 默认 CACHE Selector` 完成 26 个连续事件 batch、26 个 Stored、287 个 Removed，relay 丢失为 0。三轮热缓存／驱逐对照共六请求，实际命中 **240／0 token**、新增 Prefill **16／256 token**；新增 token 预测 MAE 从完整上下文预算的 **120** 降至事件观测的 **0**。Prefill 中位数为 **8.992／9.213 ms**，差约 **0.221 ms**。该项交付是官方事件集成与物理缓存对账，Actor 生命周期使用已验收的队列和恢复成本策略。
-
-[GPU 曲线、完整分母与原始数据](docs/GPU_VALIDATION.md) · [官方 KV 事件复现](experiments/dynamo/kv_events_README.md)
-
-### Token 与 KV 成本对账
-
-| 证据层 | 观测结果 | 对应作用 |
-| --- | --- | --- |
-| 原生会话身份 | 跨 Actor epoch 保持 `X-Dynamo-Session-ID`，旋转 inference lease | 为恢复后的前缀亲和性保留稳定身份 |
-| 单 Worker vLLM 热缓存 | 256 输入命中 240：**93.75%**；三请求合计避免 **720 个 Re-prefill Token** | 官方 KV 事件与实际 Prefill 交叉核验 |
-| 驱逐后同输入 | 命中 0，重算 256；Prefill 中位数 9.213 ms | 度量缓存消失后的实际工作量 |
-| ThunderAgent acting 配额 | **708 → 0 → 708**，SUSPENDED 回收 708 个逻辑 Token 配额 | 原生 CPU Mocker 的准入预算释放与恢复 |
-
-真实 GPU 命中数据来自独立缓存事件实验；跨 Suspend/Resume 的物理命中率消融标为 `not_collected_cross_suspend_resume_gpu`。30 组 CUDA 曲线同时记录 KV 驻留 **576～2,304 MiB** 与重算 **0.179～0.746 s**，支持显存驻留和返回代价的分层核算。[统一 Token 成本 JSON](docs/evidence/gpu/token-cost-summary.json)
-
 ## 公开真实轨迹与样本分布
 
 TraceLab v0.0.2 全来源包括 **8,058 会话、52 个贡献者**。预算内完整审核 303 会话，33 个质量合格窗口全部进入探索性回放；其中七个窗口具有多个模型轮次，共 48 个模型阶段、32 次同步工具调用，来自八个贡献者。
@@ -151,9 +121,9 @@ make demo
 | 证据引用和归档完整性 | `make evidence-audit` |
 | 原生 Rust Frontend＋官方 CPU Mocker | [Dynamo 构建与运行](experiments/dynamo/README.md)；`make native-verify` |
 | Kind／gVisor MEMORY 与真实 Agent | [Substrate 部署](deploy/substrate/)，[DeerFlow 接入](adapters/deerflow/)；`make live-suite` |
-| 同 Runner 配对、故障与 GPU | [v2 实验入口](docs/V2_EVALUATION.md#复现)、[实验报告](docs/EXPERIMENTS.md)、[GPU 复现](docs/GPU_VALIDATION.md) |
+| 同 Runner 配对与故障 | [v2 实验入口](docs/V2_EVALUATION.md#复现)、[实验报告](docs/EXPERIMENTS.md) |
 
-各实验记录源码 SHA、配置、种子、完整请求分母和资源清理。规模与故障运行使用独立 Actions；CPU Mocker 的执行路径与真实 GPU 数据按实验类型分别归档。
+各实验记录源码 SHA、配置、种子、完整请求分母和资源清理。规模与故障运行使用独立 Actions，结果按实验类型归档。
 
 ## 阅读入口
 
