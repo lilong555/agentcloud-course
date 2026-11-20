@@ -1,7 +1,5 @@
-name: Validate AgentCloud
+name: Extended AgentCloud Validation
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
