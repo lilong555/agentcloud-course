@@ -1,0 +1,26 @@
+name: 课程任务
+description: 记录需求调研、功能实现、测试或文档任务
+title: "[课程] "
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 用户场景与目标
+      description: 写明对应需求编号、使用者和希望完成的事情。
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: 交付物与验收条件
+      description: 列出可核验的成果、验证方法和资料来源。
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: 负责人 / 协作人
+  - type: input
+    id: due
+    attributes:
+      label: 计划完成时间

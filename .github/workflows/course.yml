@@ -1,0 +1,62 @@
+name: Course CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: course-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  course-check:
+    name: course-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: agentcloud
+          POSTGRES_PASSWORD: agentcloud-ci
+          POSTGRES_DB: agentcloud
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U agentcloud"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      AGENTCLOUD_TEST_PG_ADMIN: postgresql://agentcloud:agentcloud-ci@127.0.0.1:5432/agentcloud?sslmode=disable
+      GOMAXPROCS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare locked Substrate source
+        run: python3 scripts/upstream.py --fetch substrate
+      - name: Verify contracts and runtime
+        run: make check GO=go
+      - name: Run classroom demonstration
+        run: make demo GO=go
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: course-verification
+          path: |
+            docs/evidence/local-contract.json
+            docs/evidence/replay-demo.json
+            docs/evidence/service-local-demo.json
+            docs/evidence/logs/local-*/
+          retention-days: 7
