@@ -64,6 +64,11 @@ flowchart LR
 | 资料 | 内容 |
 | --- | --- |
 | [选题说明](docs/course/PROJECT.md) | 个人工作台定位、Web MVP、技术研究和验收标准 |
+| [SRS v1.0](docs/course/SRS.md) | 功能需求、量化质量指标和技术与运行约束 |
+| [用户故事与 Issue](docs/course/USER_STORIES.md) | 24 条故事、负责人、证据及 Given/When/Then |
+| [用例图与场景](docs/course/USE_CASES.md) | 主要和次要参与者、17 个用例的主流程与备选流 |
+| [需求追溯矩阵](docs/course/TRACEABILITY.md) | 需求、用例、故事与证据的对应关系 |
+| [第 03 课交付](docs/course/LESSON03.md) | 课堂讲解、评审、发布和下次课模型草稿 |
 | [产品故事](docs/course/PRODUCT_STORY.md) | 目标用户、日常任务、产品体验与演示路线 |
 | [需求调研报告](docs/course/RESEARCH_REPORT.md) | 已有技术证据、用户假设与待采集材料 |
 | [调研计划表](docs/course/RESEARCH_PLAN.md) | 学生与个人开发者访谈、问卷和原型试用 |

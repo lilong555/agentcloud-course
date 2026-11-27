@@ -2,6 +2,8 @@
 
 需求、调研、实现和缺陷通过 Issue 追踪。每个任务写清用户场景、交付物、负责人和验收条件，并关联[需求编号](docs/course/PROJECT.md)。
 
+需求基线见 [SRS](docs/course/SRS.md)，故事与用例对应见[追溯矩阵](docs/course/TRACEABILITY.md)。新故事使用“用户故事”模板，需求变更使用“需求变更”模板；影响分析、同步范围和发布约定见[需求变更流程](docs/course/CHANGE_CONTROL.md)。
+
 ## 开发与评审
 
 ```bash
