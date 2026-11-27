@@ -3,3 +3,4 @@
 *.txt -whitespace
 docs/evidence/** -whitespace
 integrations/** -whitespace
+docs/course/deliverables/*.pdf binary
