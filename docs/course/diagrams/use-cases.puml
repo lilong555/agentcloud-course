@@ -1,0 +1,68 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam defaultFontName SansSerif
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam packageStyle rectangle
+skinparam usecaseBackgroundColor #F0F9F6
+skinparam usecaseBorderColor #217A67
+skinparam actorBorderColor #30363D
+skinparam ArrowColor #59636E
+title AgentCloud 个人 AI 云端工作台 · 用例图
+actor "个人用户\n学生 / 科研人员 / 个人开发者" as User
+actor "课程演示者 / 测试成员" as Tester
+actor "推理服务\nDynamo / 模型接口" as Model
+actor "沙箱与快照服务\nSubstrate / gVisor" as Sandbox
+rectangle "AgentCloud 系统" {
+  usecase "UC-01 创建工位" as UC01
+  usecase "UC-02 浏览工位" as UC02
+  usecase "UC-03 提交任务" as UC03
+  usecase "UC-04 查看工具结果" as UC04
+  usecase "UC-05 浏览文件" as UC05
+  usecase "UC-06 保存文件" as UC06
+  usecase "UC-07 智能休眠" as UC07
+  usecase "UC-08 唤醒工位" as UC08
+  usecase "UC-09 等待容量" as UC09
+  usecase "UC-10 查看运行状态" as UC10
+  usecase "UC-11 查回任务" as UC11
+  usecase "UC-12 复用操作回执" as UC12
+  usecase "UC-13 核对未知结果" as UC13
+  usecase "UC-14 查看资源用量" as UC14
+  usecase "UC-15 估算使用费用" as UC15
+  usecase "UC-16 对照调度策略" as UC16
+  usecase "UC-17 验证共享容量" as UC17
+}
+User -- UC01
+User -- UC02
+User -- UC03
+User -- UC04
+User -- UC05
+User -- UC06
+User -- UC07
+User -- UC08
+User -- UC09
+User -- UC10
+User -- UC11
+User -- UC12
+User -- UC13
+User -- UC14
+User -- UC15
+Tester -- UC16
+Tester -- UC17
+UC03 -- Model
+UC07 -- Model
+UC08 -- Model
+UC16 -- Model
+UC17 -- Model
+UC01 -- Sandbox
+UC04 -- Sandbox
+UC05 -- Sandbox
+UC06 -- Sandbox
+UC07 -- Sandbox
+UC08 -- Sandbox
+UC09 -- Sandbox
+UC13 -- Sandbox
+UC16 -- Sandbox
+UC17 -- Sandbox
+@enduml

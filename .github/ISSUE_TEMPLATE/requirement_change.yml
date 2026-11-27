@@ -1,0 +1,39 @@
+name: 需求变更
+description: 变更 SRS、故事、用例或质量验收目标
+title: "[需求变更] "
+labels: [requirement-change]
+body:
+  - type: input
+    id: requirements
+    attributes:
+      label: 受影响需求与用例
+      placeholder: FR-08 / UC-08 / US-08
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 用户场景与目标行为
+      description: 说明变更原因、需求证据及预期结果。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      value: "Given：\nWhen：\nThen："
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: 影响分析
+      description: 列出 SRS、故事、用例、矩阵、接口、数据、测试、工期与资源预算影响。
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: 负责人及关联 PR
+    validations:
+      required: true

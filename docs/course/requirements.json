@@ -1,0 +1,825 @@
+{
+  "product": "AgentCloud 个人 AI 云端工作台",
+  "version": "1.0",
+  "date": "2026-11-27",
+  "repository": "lilong555/agentcloud-course",
+  "requirements": [
+    {
+      "id": "FR-01",
+      "title": "共享执行槽位",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-02",
+      "title": "按等待与成本智能休眠",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-03",
+      "title": "管理容量与恢复排队",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-04",
+      "title": "对照调度策略",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-05",
+      "title": "呈现状态与资源用量",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-06",
+      "title": "创建和管理个人工位",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-07",
+      "title": "发起任务并查询持久结果",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-08",
+      "title": "操作文件并恢复工作现场",
+      "priority": "P0"
+    },
+    {
+      "id": "FR-09",
+      "title": "估算资源节省与使用费用",
+      "priority": "P1"
+    },
+    {
+      "id": "NFR-01",
+      "title": "状态与副作用一致性",
+      "priority": "P0"
+    },
+    {
+      "id": "NFR-02",
+      "title": "资源与交互联合评价",
+      "priority": "P0"
+    },
+    {
+      "id": "NFR-03",
+      "title": "交付与实验可复现",
+      "priority": "P0"
+    },
+    {
+      "id": "NFR-04",
+      "title": "主要流程易用性",
+      "priority": "P0"
+    },
+    {
+      "id": "NFR-05",
+      "title": "查询性能与状态新鲜度",
+      "priority": "P0"
+    },
+    {
+      "id": "NFR-06",
+      "title": "身份认证与租户隔离",
+      "priority": "P0"
+    },
+    {
+      "id": "NFR-07",
+      "title": "重启恢复与故障可见性",
+      "priority": "P0"
+    }
+  ],
+  "stories": [
+    {
+      "id": "US-01",
+      "title": "为不同任务创建独立工位",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-06"
+      ],
+      "use_cases": [
+        "UC-01"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-02"
+      ],
+      "assignee": "lilong555",
+      "role": "同时做课程代码和数据分析的学生",
+      "want": "为每个任务创建独立云端工位",
+      "benefit": "各任务保留各自的文件与进度",
+      "implementation": "会话创建 API 已有；任务名称与 Web 创建入口待实现",
+      "acceptance": [
+        {
+          "given": "已配置有效身份且会话配额充足",
+          "when": "依次创建课程代码、数据分析、实验图表三个工位",
+          "then": "返回三个不同会话身份，列表可分别进入，向一个工位写入的标记文件只属于该工作区"
+        },
+        {
+          "given": "一个创建请求已提交",
+          "when": "重复提交相同会话身份和输入或收到配额错误",
+          "then": "按服务端原身份查询结果或显示配额原因，工作台保留原任务输入"
+        }
+      ],
+      "issue_number": 6
+    },
+    {
+      "id": "US-02",
+      "title": "从工位列表继续已有任务",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-06"
+      ],
+      "use_cases": [
+        "UC-02"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-02"
+      ],
+      "assignee": "lilong555",
+      "role": "在多个项目间切换的个人开发者",
+      "want": "查看自己的工位并打开原任务",
+      "benefit": "切换或刷新后仍能找到工作现场",
+      "implementation": "会话列表与详情 API 已有；工位卡片待实现",
+      "acceptance": [
+        {
+          "given": "当前身份已有三个工位",
+          "when": "刷新列表并打开其中任一工位",
+          "then": "显示该会话的身份和已确认状态，刷新前后会话身份一致，列表仅含当前租户工位"
+        }
+      ],
+      "issue_number": 7
+    },
+    {
+      "id": "US-03",
+      "title": "向工位提交任务并查看助手结果",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-07"
+      ],
+      "use_cases": [
+        "UC-03"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-02"
+      ],
+      "assignee": "lilong555",
+      "role": "使用 AI 处理代码或数据的个人用户",
+      "want": "在工位中提交指令并查看进度和结果",
+      "benefit": "在一个工作区内完成任务",
+      "implementation": "模型请求与结果认领 API 已有；对话与执行流程待接入",
+      "acceptance": [
+        {
+          "given": "工位可用且受控模型返回一个固定结果",
+          "when": "提交一条任务并等待完成",
+          "then": "生成稳定 logical_request_id，依次显示已提交和结果，记录结果认领，完成一次模型请求至结果展示闭环"
+        }
+      ],
+      "issue_number": 8
+    },
+    {
+      "id": "US-04",
+      "title": "查看工具执行输出和失败原因",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-07"
+      ],
+      "use_cases": [
+        "UC-04"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03"
+      ],
+      "assignee": "lilong555",
+      "role": "用助手调试代码的个人开发者",
+      "want": "看到工具输出、退出码及执行状态",
+      "benefit": "判断任务是否完成并定位失败步骤",
+      "implementation": "文件和 shell 工具、回执已有；工具结果界面待实现",
+      "acceptance": [
+        {
+          "given": "工位已获得执行资源且工具 gate 为 OPEN",
+          "when": "执行一个成功工具和一个受控失败工具",
+          "then": "各自保存独立 tool_op_id，界面对应展示 stdout、stderr、退出码或结构化错误，结果与持久回执一致"
+        }
+      ],
+      "issue_number": 9
+    },
+    {
+      "id": "US-05",
+      "title": "浏览工作区并读取已有文件",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-08"
+      ],
+      "use_cases": [
+        "UC-05"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-02",
+        "EV-03"
+      ],
+      "assignee": "lilong555",
+      "role": "整理课程实验的学生",
+      "want": "从文件列表打开助手生成的文件",
+      "benefit": "直接检查任务产物",
+      "implementation": "file_read 已有；受限目录列表接口与文件浏览待实现",
+      "acceptance": [
+        {
+          "given": "工作区内有内容已知的 UTF-8 文件和一个空文件",
+          "when": "打开目录列表并分别读取两个文件及一个缺失路径",
+          "then": "显示正确相对路径和原内容，空文件显示为空，缺失路径显示 FILE_NOT_FOUND，文件访问遵守工作区路径约束"
+        }
+      ],
+      "issue_number": 10
+    },
+    {
+      "id": "US-06",
+      "title": "保存文件并保留写入回执",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-08"
+      ],
+      "use_cases": [
+        "UC-06"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03"
+      ],
+      "assignee": "lilong555",
+      "role": "维护实验脚本的研究生",
+      "want": "在当前工位保存修改后的文件",
+      "benefit": "下一步工具执行使用确认过的内容",
+      "implementation": "file_write 与回执已有；编辑保存界面待实现",
+      "acceptance": [
+        {
+          "given": "当前工位处于可写状态且文件大小在 1 MiB 上限内",
+          "when": "用唯一 tool_op_id 保存含随机标记的文本并读回",
+          "then": "提交成功回执，读回内容与原文本及摘要一致，失败时展示服务端错误并保留待保存文本"
+        }
+      ],
+      "issue_number": 11
+    },
+    {
+      "id": "US-07",
+      "title": "等待期间自动存档并让出执行槽位",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-02"
+      ],
+      "use_cases": [
+        "UC-07"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-04",
+        "EV-05"
+      ],
+      "assignee": "lilong555",
+      "role": "关注云端用量的个人用户",
+      "want": "让工位在合适的等待阶段自动休眠",
+      "benefit": "减少等待期间的执行资源占用",
+      "implementation": "安全点、调度决策与挂起已有；产品状态展示待接入",
+      "acceptance": [
+        {
+          "given": "已配置调度策略并准备短等待、长等待和样本不足轨迹",
+          "when": "模型请求或显式闲置窗口触发决策",
+          "then": "记录等待、切换成本、容量观测和 KEEP 或 SUSPEND；挂起先完成安全点与持久快照，再释放槽位，样本不足的 v2 采用固定两秒期限并遵守安全约束"
+        }
+      ],
+      "issue_number": 12
+    },
+    {
+      "id": "US-08",
+      "title": "唤醒后继续原文件和执行现场",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-08"
+      ],
+      "use_cases": [
+        "UC-08"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-03",
+        "EV-06"
+      ],
+      "assignee": "lilong555",
+      "role": "上课后回来继续项目的学生",
+      "want": "唤醒休眠工位后继续原任务",
+      "benefit": "保留已有文件、依赖和可恢复状态",
+      "implementation": "MEMORY 恢复与身份校验已有；继续任务入口待接入",
+      "acceptance": [
+        {
+          "given": "已保存随机标记文件并在真实 MEMORY 环境记录进程 nonce 和堆标记",
+          "when": "挂起工位后登记返回需求并完成恢复",
+          "then": "文件内容和摘要相同，进程标记连续，epoch 按协议推进，界面展示实际恢复耗时及 fidelity；VOLUMES 演示按文件恢复标识"
+        }
+      ],
+      "issue_number": 13
+    },
+    {
+      "id": "US-09",
+      "title": "资源繁忙时查看容量等待状态",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-03"
+      ],
+      "use_cases": [
+        "UC-09"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-05"
+      ],
+      "assignee": "lilong555",
+      "role": "在共享环境继续任务的学生",
+      "want": "知道工位是否正在等待执行资源",
+      "benefit": "能区分容量排队与任务失败",
+      "implementation": "恢复容量回执已有；首次准入与恢复等待统一展示待接入",
+      "acceptance": [
+        {
+          "given": "四个热槽位已占用且另一个工位发起恢复",
+          "when": "服务返回 WAITING_CAPACITY 及重试时间",
+          "then": "显示容量等待和已等待时间，按服务端时间沿用原操作身份继续，权威状态确认前保留原 epoch 和 manifest；首次准入等待单独记录"
+        }
+      ],
+      "issue_number": 14
+    },
+    {
+      "id": "US-10",
+      "title": "看懂工作、存档和唤醒进度",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-05"
+      ],
+      "use_cases": [
+        "UC-10"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-02"
+      ],
+      "assignee": "lilong555",
+      "role": "同时管理多个助手的个人用户",
+      "want": "用文字状态识别每个任务的进度",
+      "benefit": "知道当前应该等待、继续还是处理异常",
+      "implementation": "会话状态、生命周期回执与事件已有；组合展示待实现",
+      "acceptance": [
+        {
+          "given": "存在工作、模型等待、存档、休眠、唤醒、容量等待和待核对轨迹",
+          "when": "状态接口或事件确认这些变化",
+          "then": "卡片和详情显示一致的文字状态、时间及来源，生命周期、模型等待和容量状态分别保留，事件缺口后重新读取权威状态"
+        }
+      ],
+      "issue_number": 15
+    },
+    {
+      "id": "US-11",
+      "title": "刷新后查回原任务结果",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-07"
+      ],
+      "use_cases": [
+        "UC-11"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-02"
+      ],
+      "assignee": "lilong555",
+      "role": "网络恢复后继续工作的个人用户",
+      "want": "按原任务身份查看进度和结果",
+      "benefit": "刷新页面后继续追踪同一任务",
+      "implementation": "持久模型请求和回执查询已有；页面恢复上下文待实现",
+      "acceptance": [
+        {
+          "given": "一个任务已登记或完成并保存逻辑请求身份",
+          "when": "刷新页面后用原身份查询",
+          "then": "显示原任务状态、结果或待核对提示，查询本身保持原物理请求计数，已完成结果与刷新前一致"
+        }
+      ],
+      "issue_number": 16
+    },
+    {
+      "id": "US-12",
+      "title": "重复提交同一操作时复用原回执",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-07",
+        "NFR-01"
+      ],
+      "use_cases": [
+        "UC-12"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03"
+      ],
+      "assignee": "lilong555",
+      "role": "遇到响应延迟的个人开发者",
+      "want": "重复点击时沿用同一操作身份",
+      "benefit": "能够确认原操作结果并维持副作用一致性",
+      "implementation": "工具 ID 输入绑定与持久回执已有；客户端身份复用待接入",
+      "acceptance": [
+        {
+          "given": "工具操作已有终态回执",
+          "when": "使用同 tool_op_id 和相同输入重放 20 次",
+          "then": "返回相同持久结果，受控工具实际执行次数保持一次"
+        },
+        {
+          "given": "同一个操作 ID 已绑定原输入",
+          "when": "使用该 ID 提交不同输入",
+          "then": "返回身份或输入冲突并保留原回执与工作区内容"
+        }
+      ],
+      "issue_number": 17
+    },
+    {
+      "id": "US-13",
+      "title": "对结果未知的操作执行只读核对",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-07",
+        "NFR-01"
+      ],
+      "use_cases": [
+        "UC-13"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03"
+      ],
+      "assignee": "lilong555",
+      "role": "处理异常任务的个人开发者",
+      "want": "查看待核对操作及允许的后续动作",
+      "benefit": "根据实际结果决定如何继续",
+      "implementation": "OUTCOME_UNKNOWN、恢复提示与只读检查已有；产品处理页待实现",
+      "acceptance": [
+        {
+          "given": "模拟工具已产生副作用但终态回执丢失",
+          "when": "协调器标记 OUTCOME_UNKNOWN",
+          "then": "保留原操作身份，显示 RECOVERY_REQUIRED 和允许的只读检查；写入、自动重放与新安全点保持关闭，核对后按人工确认的流程处理"
+        }
+      ],
+      "issue_number": 18
+    },
+    {
+      "id": "US-14",
+      "title": "查看工位数量与实际资源用量",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-05"
+      ],
+      "use_cases": [
+        "UC-14"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-07"
+      ],
+      "assignee": "lilong555",
+      "role": "关注使用开销的个人用户",
+      "want": "分别看到工位总数、热槽位和资源积分",
+      "benefit": "理解多个工位怎样共享执行资源",
+      "implementation": "原始指标与资源分析已有；租户范围的看板聚合待实现",
+      "acceptance": [
+        {
+          "given": "有固定运行身份、测量窗口和后端资源记录",
+          "when": "打开用量看板",
+          "then": "会话数、休眠数与实际槽位可逐项核对，GB·s、恢复耗时和采样覆盖率附单位与来源，缺测显示待采集；租户页面仅展示授权范围"
+        }
+      ],
+      "issue_number": 19
+    },
+    {
+      "id": "US-15",
+      "title": "查看有基线和价格来源的费用估算",
+      "category": "functional",
+      "priority": "P1",
+      "requirement_ids": [
+        "FR-09"
+      ],
+      "use_cases": [
+        "UC-15"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-07"
+      ],
+      "assignee": "lilong555",
+      "role": "有月度云端预算的学生",
+      "want": "按实际用量和单价估算费用",
+      "benefit": "根据资源开销选择使用方式",
+      "implementation": "成本指标口径已有；价格参数与分项费用估算待实现",
+      "acceptance": [
+        {
+          "given": "同配置同负载的基线积分为 100 GB·s、当前为 80 GB·s，其他成本项有采集状态",
+          "when": "计算资源节省和费用",
+          "then": "资源节省显示 20%，计算资源、模型调用、存储和 I/O 按明确单价分项列出，缺测保留待采集，完整总额在成本项齐备后提供"
+        }
+      ],
+      "issue_number": 20
+    },
+    {
+      "id": "US-16",
+      "title": "用同一负载对照 TTL 与智能调度",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-04"
+      ],
+      "use_cases": [
+        "UC-16"
+      ],
+      "evidence": [
+        "EV-05",
+        "EV-08"
+      ],
+      "assignee": "lilong555",
+      "role": "讲解项目的课程演示者",
+      "want": "展示固定 TTL 与 v2 的配对结果",
+      "benefit": "解释调度对资源和等待的实际影响",
+      "implementation": "受控 Runner 与配对分析已有；演示入口待接入",
+      "acceptance": [
+        {
+          "given": "固定机器、源码、负载、窗口和至少三个种子对",
+          "when": "在独立演示环境运行或读取 TTL 与 v2 对照",
+          "then": "显示每个运行身份、计划和完成请求数、资源与 TTFT P95 的配对差及区间，同时保留失败、缺测与清理结果"
+        }
+      ],
+      "issue_number": 21
+    },
+    {
+      "id": "US-17",
+      "title": "让多个有状态工位共享有限槽位",
+      "category": "functional",
+      "priority": "P0",
+      "requirement_ids": [
+        "FR-01"
+      ],
+      "use_cases": [
+        "UC-17"
+      ],
+      "evidence": [
+        "EV-06",
+        "EV-08"
+      ],
+      "assignee": "lilong555",
+      "role": "使用校园共享环境的学生",
+      "want": "在有限服务器资源上保留更多任务工位",
+      "benefit": "让等待中的任务按需让出执行资源",
+      "implementation": "64 Agent / 4 gVisor 槽位历史验证已有；课程复现实验待执行",
+      "acceptance": [
+        {
+          "given": "真实 MEMORY 环境配置四个热槽位、六轮任务和冻结负载",
+          "when": "按课程预算运行 N 个有状态会话并执行至清理结束",
+          "then": "记录 N/4 复用倍率，实测热槽位峰值至多四个，完成分母和状态校验齐全；N=64 时记为 16×，实际运行配置单独保存"
+        }
+      ],
+      "issue_number": 22
+    },
+    {
+      "id": "US-18",
+      "title": "验证恢复与重复操作的一致性",
+      "category": "reliability",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-01"
+      ],
+      "use_cases": [
+        "UC-08",
+        "UC-12",
+        "UC-13"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03",
+        "EV-06"
+      ],
+      "assignee": "lilong555",
+      "role": "依赖任务现场的个人用户",
+      "want": "恢复后的文件和已确认操作保持一致",
+      "benefit": "继续工作时有可核验的结果",
+      "implementation": "身份、快照、回执与相关回归已有；课程验收记录待补齐",
+      "acceptance": [
+        {
+          "given": "真实 MEMORY 工位和十组唯一文件、进程标记及受控工具计数器",
+          "when": "完成十次挂起恢复并对已完成操作分别重放 20 次",
+          "then": "十次文件摘要和进程标记全部一致，已完成操作各执行一次；未知结果独立记录并进入核对"
+        }
+      ],
+      "issue_number": 23
+    },
+    {
+      "id": "US-19",
+      "title": "同时评价资源消耗与交互等待",
+      "category": "measurement",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-02"
+      ],
+      "use_cases": [
+        "UC-14",
+        "UC-16",
+        "UC-17"
+      ],
+      "evidence": [
+        "EV-05",
+        "EV-07",
+        "EV-08"
+      ],
+      "assignee": "lilong555",
+      "role": "核验项目效果的课程评审者",
+      "want": "使用同口径的资源与延迟数据",
+      "benefit": "判断策略的收益和代价",
+      "implementation": "配对分析和覆盖率门槛已有；课程结果按新运行归档",
+      "acceptance": [
+        {
+          "given": "至少三个完整种子对及全部计划请求分母",
+          "when": "生成资源和交互评价报告",
+          "then": "逐种子报告 GB·s 与 TTFT P95 差及 95% 区间，资源覆盖率达到 90% 才参与联合判定，失败与缺测继续保留在分母和状态中"
+        }
+      ],
+      "issue_number": 24
+    },
+    {
+      "id": "US-20",
+      "title": "按冻结配置复现演示与实验",
+      "category": "reproducibility",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-03"
+      ],
+      "use_cases": [
+        "UC-16",
+        "UC-17"
+      ],
+      "evidence": [
+        "EV-05",
+        "EV-09"
+      ],
+      "assignee": "lilong555",
+      "role": "复查交付的测试成员",
+      "want": "获得源码、配置、种子、命令和清理记录",
+      "benefit": "按同一协议复现结果",
+      "implementation": "锁定依赖、CI 与实验脚本已有；课程材料与运行对应保存",
+      "acceptance": [
+        {
+          "given": "一份冻结的交付记录",
+          "when": "另一位成员按命令运行基础演示并检查一个实验归档",
+          "then": "make check 和 make demo 有实际结果，源码、依赖、运行身份、种子、原始数据和清理记录七类字段全部可定位"
+        }
+      ],
+      "issue_number": 25
+    },
+    {
+      "id": "US-21",
+      "title": "让个人用户独立完成主要流程",
+      "category": "usability",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-04"
+      ],
+      "use_cases": [
+        "UC-01",
+        "UC-03",
+        "UC-05",
+        "UC-08",
+        "UC-10"
+      ],
+      "evidence": [
+        "EV-01",
+        "EV-10"
+      ],
+      "assignee": "lilong555",
+      "role": "首次使用的高校学生",
+      "want": "理解界面并完成建工位、发任务和继续工作",
+      "benefit": "顺利完成自己的任务",
+      "implementation": "试用协议已规划；工作台与真实用户试用待完成",
+      "acceptance": [
+        {
+          "given": "可运行工作台和至少五位目标用户",
+          "when": "参与者按相同任务独立建工位、发任务、恢复并找回文件",
+          "then": "目标至少四位独立完成，报告实际人数、耗时与求助点；在 390×844 和 1440×900 视口正文至少 14 px，关键操作可见且页面无横向溢出"
+        }
+      ],
+      "issue_number": 26
+    },
+    {
+      "id": "US-22",
+      "title": "及时查询工位与更新状态",
+      "category": "performance",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-05"
+      ],
+      "use_cases": [
+        "UC-02",
+        "UC-10",
+        "UC-11"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-10"
+      ],
+      "assignee": "lilong555",
+      "role": "等待任务进度的个人用户",
+      "want": "及时打开列表和看到已确认的变化",
+      "benefit": "掌握工位进展",
+      "implementation": "状态查询 API 已有；负载目标及前端刷新待验收",
+      "acceptance": [
+        {
+          "given": "4 vCPU、16 GiB、同机测试且 RTT 至多 50 ms，已有 20 个会话和 20 个查询客户端",
+          "when": "均匀执行 1000 次已授权列表或状态 GET，并观测 20 次已确认状态变化",
+          "then": "成功查询比例至少 99%，响应 P95 至多 2 秒，20 次变化均在确认后 5 秒内呈现；报告实际硬件、分母和采样，模型生成与恢复耗时单列"
+        }
+      ],
+      "issue_number": 27
+    },
+    {
+      "id": "US-23",
+      "title": "保护个人工位与凭据",
+      "category": "security",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-06"
+      ],
+      "use_cases": [
+        "UC-01",
+        "UC-02",
+        "UC-03",
+        "UC-05",
+        "UC-06",
+        "UC-11",
+        "UC-14"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03",
+        "EV-11"
+      ],
+      "assignee": "lilong555",
+      "role": "把代码与数据保存在云端的个人用户",
+      "want": "工位和文件按身份隔离",
+      "benefit": "自己的数据只向授权身份提供",
+      "implementation": "Bearer 租户绑定和路径约束已有；Web 凭据处理待实现并验收",
+      "acceptance": [
+        {
+          "given": "两个租户各有独立工位和不同文件标记",
+          "when": "对列表、详情、请求、文件及用量执行 20 次跨租户或无效凭据访问，并执行路径逃逸用例",
+          "then": "20 次全部被拒绝且响应包含零条他人记录，逃逸访问全部被拒绝；浏览器构建产物和日志中检索测试服务凭据命中数为零"
+        }
+      ],
+      "issue_number": 28
+    },
+    {
+      "id": "US-24",
+      "title": "服务重启后找回已确认结果并展示故障",
+      "category": "availability",
+      "priority": "P0",
+      "requirement_ids": [
+        "NFR-07"
+      ],
+      "use_cases": [
+        "UC-10",
+        "UC-11",
+        "UC-13"
+      ],
+      "evidence": [
+        "EV-02",
+        "EV-03",
+        "EV-11"
+      ],
+      "assignee": "lilong555",
+      "role": "经历短暂服务中断的个人用户",
+      "want": "恢复服务后查回已确认结果并知道待处理异常",
+      "benefit": "继续原任务并判断下一步操作",
+      "implementation": "持久日志、readiness 和未知结果语义已有；重启时限及产品故障提示待验收",
+      "acceptance": [
+        {
+          "given": "持久存储健康、20 条已确认回执及稳定运行的后端依赖",
+          "when": "重启协调器进程并分别注入日志不可写和未知结果故障",
+          "then": "正常重启目标为 30 秒内 ready，20 条回执内容一致；日志不可写时 readyz 返回 503，页面在 5 秒内提示查询故障，未知结果保留原身份并进入核对"
+        }
+      ],
+      "issue_number": 29
+    }
+  ],
+  "tracking_issue": 5
+}

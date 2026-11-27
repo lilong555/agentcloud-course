@@ -1,0 +1,40 @@
+name: 用户故事
+description: 记录带 Given/When/Then 的功能或质量需求
+title: "[故事] US-待编号 "
+labels: [story]
+body:
+  - type: input
+    id: identifiers
+    attributes:
+      label: 故事、需求和用例编号
+      placeholder: US-25 / FR-06 / UC-01
+    validations:
+      required: true
+  - type: textarea
+    id: story
+    attributes:
+      label: 用户故事
+      value: "作为：\n我想：\n以便："
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      value: "Given：\nWhen：\nThen："
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 调研证据和已有基础
+      description: 链接匿名调研记录或证据索引，并注明用户假设、技术资料或实测结果。
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: 负责人
+      description: 同时在 GitHub Assignees 中指定实际账号。
+    validations:
+      required: true
